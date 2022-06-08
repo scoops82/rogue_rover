@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+      integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <script src="/scripts/main.js" type="module"></script>
+    <title>Rogue Rover</title>
+  </head>
+
+  <body>
+    <header class="page-header">
+      <h1>Rogue Rover</h1>
+      <h2>Can you help NASA find their lost rover on Mars?</h2>
+    </header>
+    <main>
+      <section id="instructions" class="container">
+        <h2>Instructions</h2>
+
+        <ul class="instructions-list">
+          <li>
+            A Mars rover has gone rogue and is travelling randomly around a
+            plateau on Mars. You need to navigate the remaining rover to the
+            same grid reference as the rogue rover. Only then can the NASA
+            engineers regain control of it.
+          </li>
+          <li>
+            Visibility is limited so you can only see the immediate
+            surroundings. Each turn the rogue rover will broadcast its heading
+            from your current position.
+          </li>
+          <li>
+            Each turn you must enter up to 10 instructions for your rover to
+            follow.
+          </li>
+          <li>
+            The only instructions allowed are:
+            <ul>
+              <li>R - Turn 90 degrees right (clockwise)</li>
+              <li>L - Turn 90 degrees left (anticlockwise)</li>
+              <li>M - Move one space forwards.</li>
+              <li>
+                Example: LMLMLMLM will send your rover in a small circuit ending
+                up in exactly the same place it started.
+              </li>
+            </ul>
+          </li>
+          <li>
+            On your display you can see your current coordinates and heading
+          </li>
+        </ul>
+        <div class="form-container hidden">
+          <form name="grid-generator-form">
+            <div class="form-row container" hidden>
+              <label for="grid-width" class="form-label"
+                >Grid Width (25-75)</label
+              >
+              <input
+                type="number"
+                name="grid-width"
+                id="grid-width"
+                min="25"
+                max="75"
+              />
+              <label for="grid-height" class="form-label"
+                >Grid Height (25-75)</label
+              >
+              <input
+                type="number"
+                name="grid-height"
+                id="grid-height"
+                min="25"
+                max="75"
+              />
+            </div>
+            <div class="form-row container">
+              <button type="reset" class="btn btn-warning" hidden>Reset</button>
+              <button type="submit" class="btn btn-primary">Start Game</button>
+            </div>
+          </form>
+        </div>
+      </section>
+      <section id="play-area" class="container">
+        <div class="plateau-container">
+          <div class="plateau-grid"></div>
+        </div>
+        <div id="display">
+          <div class="messages">
+            <h3>Messages</h3>
+            <p id="message-display"></p>
+          </div>
+          <div class="coordinates">
+            <p>Your Coordinates: <span id="coordinates-display"></span></p>
+          </div>
+          <div class="heading">
+            <p>Your Heading: <span id="player-heading-display"></span></p>
+          </div>
+          <div class="rogue-heading">
+            <p>
+              Target Relative Heading: <span id="target-heading-display"></span>
+            </p>
+          </div>
+          <form name="instruction-input-form">
+            <div class="form-row">
+              <label for="navigation-input" class="form-label"
+                >Navigation Input</label
+              >
+              <input
+                type="text"
+                id="navigation-input"
+                name="navigation-input"
+                required
+                pattern="^[lmrLMR]{1,10}$"
+              />
+            </div>
+            <div class="form-row">
+              <button type="button" class="btn btn-danger">New Game</button>
+              <button type="reset" class="btn btn-warning">Clear</button>
+              <button type="submit" class="btn btn-primary">Transmit</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
