@@ -1,6 +1,13 @@
 const headings = ["n", "e", "s", "w"];
 const plateauGrid = document.querySelector(".plateau-grid");
 
+function randomNumberGenerator(min, max) {
+  // Generates a random integer between min and max inclusive
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 class Plateau {
   constructor(width, height) {
     this.width = width;
