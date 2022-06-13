@@ -435,7 +435,7 @@ navInputForm.addEventListener("submit", (e) => {
   if (testForWin()) {
     console.log("Congratulations! You have docked with the Rogue Rover.");
   } else {
-    rogueRover.randomMove(5);
+    rogueRover.randomMove(10);
   }
 });
 
