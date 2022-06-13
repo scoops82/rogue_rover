@@ -3,6 +3,11 @@ const instructionsArr = ["l", "r", "m"];
 
 const plateauGrid = document.querySelector(".plateau-grid");
 
+const messagesDisplay = document.getElementById("message-display");
+const coordinatesDisplay = document.getElementById("coordinates-display");
+const headingDisplay = document.getElementById("player-heading-display");
+const turnCountDisplay = document.getElementById("turn-count-display");
+
 let playerRover;
 let rogueRover;
 
@@ -85,6 +90,7 @@ class Rover {
       `rotate(${this.iconRotation}deg) translate(0, 20px)`,
       `rotate(${this.iconRotation}deg) translate(20px, 0px)`,
     ];
+    this.turnCount = 0;
   }
   scanSurroundings() {
     const cell = document.getElementsByClassName(
@@ -268,7 +274,7 @@ class Rover {
     console.log(
       `${this.name} new position: ${this.xPosition}, ${this.yPosition}, Heading: ${this.heading}`
     );
-    testForWin();
+    this.turnCount += 1;
   }
 
   getCurrentCell() {
@@ -299,7 +305,17 @@ class Rover {
         );
     }
   }
-  randomMove() {}
+  randomMove(numberOfMoves) {
+    const randomInstructions = [];
+    let i = numberOfMoves;
+    while (i > 0) {
+      const instruction = instructionsArr[randomNumberGenerator(0, 2)];
+      randomInstructions.push(instruction);
+      i -= 1;
+    }
+    const instructionString = randomInstructions.join("");
+    this.executeInstructions(instructionString);
+  }
 }
 
 // const plateau1 = new Plateau(9, 9);
@@ -413,6 +429,14 @@ navInputForm.addEventListener("submit", (e) => {
   playerRover.executeInstructions(instructions);
   console.log(playerRover);
   navInputForm.reset();
+  headingDisplay.textContent = playerRover.heading;
+  turnCountDisplay.textContent = `${playerRover.turnCount}`;
+  coordinatesDisplay.textContent = ` x: ${playerRover.xPosition} - y: ${playerRover.yPosition}`;
+  if (testForWin()) {
+    console.log("Congratulations! You have docked with the Rogue Rover.");
+  } else {
+    rogueRover.randomMove(5);
+  }
 });
 
 function getStartingCell(clickEvent) {
@@ -431,6 +455,10 @@ function getStartingCell(clickEvent) {
 
 function testForWin() {
   if (playerRover.getCurrentCell() == rogueRover.getCurrentCell()) {
-    console.log("Congratulations! You have docked with the Rogue Rover.");
+    messagesDisplay.textContent =
+      "Congratulations! You have docked with the rogue rover";
+    return true;
+  } else {
+    return false;
   }
 }
