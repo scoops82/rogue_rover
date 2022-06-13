@@ -1,5 +1,9 @@
 const headings = ["n", "e", "s", "w"];
+const instructionsArr = ["l", "r", "m"];
+
 const plateauGrid = document.querySelector(".plateau-grid");
+
+let playerRover;
 
 function randomNumberGenerator(min, max) {
   // Generates a random integer between min and max inclusive
@@ -71,31 +75,135 @@ class Rover {
     this.yPosition = yPosition;
     this.heading = heading;
     this.plateau = plateau;
-    this.imagePath = "/assets/moon-rover-svgrepo-com.svg";
+    this.imagePath = "/assets/player-rover-icon.svg";
     this.visibilty = 2;
+    this.iconRotation = 0;
+    this.transformSettingsForRoverIcons = [
+      `rotate(${this.iconRotation}deg) translate(0, -20px)`,
+      `rotate(${this.iconRotation}deg) translate(-20px,0px)`,
+      `rotate(${this.iconRotation}deg) translate(0, 20px)`,
+      `rotate(${this.iconRotation}deg) translate(20px, 0px)`,
+    ];
+  }
+  scanSurroundings() {
+    const cell = document.getElementsByClassName(
+      `x${this.xPosition}-y${this.yPosition}`
+    )[0];
+    cell.style.backgroundImage = "none";
+    let xMax = this.xPosition + this.visibilty;
+    const xMin = this.xPosition - this.visibilty;
+    let yMax = this.yPosition + this.visibilty;
+    const yMin = this.yPosition - this.visibilty;
+    let x = xMin;
+    let y = yMin;
+    const visibleCellsClasses = [];
+    if (yMin < 1) {
+      y = 1;
+    }
+    if (xMin < 1) {
+      x = 1;
+    }
+    if (yMax > this.plateau.height) {
+      yMax = this.plateau.height;
+    }
+    if (xMax > this.plateau.width) {
+      xMax = this.plateau.width;
+    }
+    console.log(
+      "🚀 ~ file: main.js ~ line 103 ~ Rover ~ scanSurroundings ~ xMax",
+      xMax
+    );
+    console.log(
+      "🚀 ~ file: main.js ~ line 100 ~ Rover ~ scanSurroundings ~ yMax",
+      yMax
+    );
+    console.log(
+      "🚀 ~ file: main.js ~ line 100 ~ Rover ~ scanSurroundings ~ x",
+      x
+    );
+    console.log(
+      "🚀 ~ file: main.js ~ line 100 ~ Rover ~ scanSurroundings ~ y",
+      y
+    );
+
+    while (y <= yMax) {
+      let xCount = x;
+      while (xCount <= this.visibilty * 2 && xCount <= xMax - x) {
+        const classString = `x${xCount}-y${y}`;
+        visibleCellsClasses.push(classString);
+        xCount += 1;
+      }
+      y += 1;
+    }
+    console.log("visibleCellsClasses", visibleCellsClasses);
+
+    const visibleCells = [];
+
+    for (const item of visibleCellsClasses) {
+      const cell = document.getElementsByClassName(item)[0];
+      visibleCells.push(cell);
+    }
+    console.log(
+      "🚀 ~ file: main.js ~ line 133 ~ Rover ~ scanSurroundings ~ visibleCells",
+      visibleCells
+    );
+    for (const cell of visibleCells) {
+      cell.classList.toggle("visible");
+    }
   }
   selectRoverIcon() {
-    return (roverImageEl = document.getElementsByClassName(this.name));
+    const roverImageEl = document.getElementById(this.name);
+    return roverImageEl;
   }
   turnLeft() {
-    const currentHeadingIndex = headings.indexOf(this.heading);
+    let currentHeadingIndex = headings.indexOf(this.heading);
+    console.log(
+      "🚀 ~ file: main.js ~ line 159 ~ Rover ~ turnLeft ~ currentHeadingIndex",
+      currentHeadingIndex
+    );
+    const roverIcon = this.selectRoverIcon();
+    this.iconRotation -= 90;
+    console.log("turning left");
     if (currentHeadingIndex === 0) {
       this.heading = headings[3];
     } else {
-      this.heading = headings[currentHeadingIndex - 1];
+      currentHeadingIndex -= 1;
+      this.heading = headings[currentHeadingIndex];
     }
+    this.displayInitialHeading();
+    // const newHeadingIndex = headings.indexOf(this.heading);
+    // console.log(
+    //   "🚀 ~ file: main.js ~ line 170 ~ Rover ~ turnLeft ~ newHeadingIndex",
+    //   newHeadingIndex
+    // );
+    // roverIcon.style.transform =
+    //   this.transformSettingsForRoverIcons[newHeadingIndex];
   }
   turnRight() {
     const currentHeadingIndex = headings.indexOf(this.heading);
+    this.iconRotation += 90;
     if (currentHeadingIndex === 3) {
       this.heading = headings[0];
     } else {
       this.heading = headings[currentHeadingIndex + 1];
     }
+    this.displayInitialHeading();
+    // const newHeadingIndex = headings.indexOf(this.heading);
+    // roverIcon.style.transform =
+    //   this.transformSettingsForRoverIcons[newHeadingIndex];
   }
   move() {
+    const previousCell = this.getCurrentCell();
+    const roverIcon = this.selectRoverIcon();
+    console.log(
+      "🚀 ~ file: main.js ~ line 182 ~ Rover ~ move ~ previousCell",
+      previousCell
+    );
+
     switch (this.heading) {
       case "n":
+        roverIcon.style.animation =
+          "move-north 600ms 100ms ease-in-out forward";
         this.yPosition += 1;
         break;
       case "s":
@@ -110,16 +218,30 @@ class Rover {
       default:
         throw new Error(`Something wrong with the rover move() method!`);
     }
-
     const xLimit = this.plateau.xMax;
     const yLimit = this.plateau.yMax;
 
     if (this.xPosition <= 0 || this.yPosition <= 0) {
       console.log(`Your rover has fallen off the plateau! (below zero)`);
+      // return GameOverDisplay();
+      /// TODO write function to display gameover message
     }
     if (this.xPosition > xLimit || this.yPosition > yLimit) {
       console.log(`Your rover has fallen off the plateau!`);
     }
+
+    const newCell = document.getElementsByClassName(
+      `x${this.xPosition}-y${this.yPosition}`
+    )[0];
+    console.log(
+      "🚀 ~ file: main.js ~ line 202 ~ Rover ~ move ~ newCell",
+      newCell
+    );
+    function replaceIcon() {
+      newCell.innerHTML = previousCell.innerHTML;
+      previousCell.innerHTML = "";
+    }
+    setTimeout(replaceIcon(), 700);
   }
   executeInstructions(instructionsString) {
     // Instructions will come in as a string
@@ -141,7 +263,38 @@ class Rover {
             `An unknown instruction was given to executeInstructions() method!`
           );
       }
-      console.log(`${this.name}: ${this.xPosition}, ${this.yPosition}`);
+    }
+    console.log(
+      `${this.name} new position: ${this.xPosition}, ${this.yPosition}, Heading: ${this.heading}`
+    );
+  }
+
+  getCurrentCell() {
+    return document.getElementsByClassName(
+      `x${this.xPosition}-y${this.yPosition}`
+    )[0];
+  }
+  displayInitialHeading() {
+    const roverImgEl = this.selectRoverIcon();
+    console.log(this.name, "heading:", this.heading);
+    console.log("roverImgEl", roverImgEl);
+    switch (this.heading) {
+      case "e":
+        roverImgEl.style.transform = `rotate(90deg) translate(-20px,0px)`;
+        break;
+      case "s":
+        roverImgEl.style.transform = "rotate(180deg) translate(0, 20px)";
+        break;
+      case "w":
+        roverImgEl.style.transform = "rotate(270deg)  translate(20px, 0px)";
+        break;
+      case "n":
+        roverImgEl.style.transform = "translate(0px, -20px)";
+        break;
+      default:
+        throw new Error(
+          `Unknown heading (${this.heading}) passed to displayInitialHeading method.`
+        );
     }
   }
 }
@@ -185,7 +338,7 @@ gridGeneratorForm.addEventListener("submit", (e) => {
   const data = serialize(gridGeneratorForm);
   const width = data["grid-width"];
   const height = data["grid-height"];
-  const plateau = new Plateau(width, height);
+  const plateau = new Plateau(25, 25);
   const gridContainer = document.getElementsByClassName("plateau-grid");
   // gridContainer.classList.remove("hidden");
   const gridStyles = new CSSStyleSheet();
@@ -199,10 +352,58 @@ gridGeneratorForm.addEventListener("submit", (e) => {
   );
 
   for (const cell of clickableGridArray) {
-    const startingCell = cell.addEventListener("click", (e) => {
-      console.log(e);
-      startingCell.innerHTML;
-    });
+    cell.addEventListener("click", placePlayerRover);
+  }
+  function placePlayerRover(e) {
+    console.log(e);
+    const xyStart = getStartingCell(e);
+    const xStart = xyStart[0] * 1;
+    const yStart = xyStart[1] * 1;
+    const heading = headings[randomNumberGenerator(0, 3)];
+    playerRover = new Rover("playerRover", xStart, yStart, heading, plateau);
+    console.log(
+      "🚀 ~ file: main.js ~ line 213 ~ startingCell ~ playerRover",
+      playerRover
+    );
+
+    xyStart[2][0].innerHTML = `<img id='${playerRover.name}' src="${playerRover.imagePath}" />`;
+    playerRover.scanSurroundings();
+    playerRover.displayInitialHeading();
+    makeGridUnclickable();
+    placeRogueRover(plateau.width, plateau.height, xStart, yStart);
+  }
+  function makeGridUnclickable() {
+    const GridArray = Array.from(document.querySelectorAll(".cell"));
+    for (const cell of GridArray) {
+      cell.removeEventListener("click", placePlayerRover);
+      // console.log(cell, "is now unclickable");
+    }
+  }
+  function placeRogueRover(xMax, yMax, playerStartX, playerStartY) {
+    let startX = randomNumberGenerator(1, xMax);
+    let startY = randomNumberGenerator(1, yMax);
+    while (startX == playerStartX && startY == playerStartY) {
+      startX = randomNumberGenerator(1, xMax);
+      startY = randomNumberGenerator(1, yMax);
+    }
+    const heading = headings[randomNumberGenerator(0, 3)];
+    const rogueRover = new Rover(
+      "rogueRover",
+      startX,
+      startY,
+      heading,
+      plateau
+    );
+    const startCellClass = `x${startX}-y${startY}`;
+    const startingCell = document.getElementsByClassName(startCellClass);
+    console.log(
+      "🚀 ~ file: main.js ~ line 316 ~ placeRogueRover ~ startingCell",
+      startingCell
+    );
+
+    startingCell[0].innerHTML = `<img id='${rogueRover.name}' src="/assets/rogue-rover-icon.svg" />`;
+    console.log("Rogue Rover", rogueRover);
+    rogueRover.displayInitialHeading();
   }
 });
 
@@ -212,10 +413,21 @@ navInputForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const data = serialize(navInputForm);
   const instructions = data["navigation-input"];
-  rover.executeInstructions(instructions);
-  console.log(rover);
+  playerRover.executeInstructions(instructions);
+  console.log(playerRover);
+  navInputForm.reset();
 });
 
-function placeRover(xyClass) {}
-
-// console.log("plateauGrid", plateauGrid);
+function getStartingCell(clickEvent) {
+  const xyString = clickEvent.target.classList[1];
+  console.log(
+    "🚀 ~ file: main.js ~ line 222 ~ getStartingCell ~ xyString",
+    xyString
+  );
+  const regex = /[1-9]{1,}/g;
+  const xyArr = [...xyString.match(regex)];
+  console.log("🚀 ~ file: main.js ~ line 229 ~ getStartingCell ~ xyArr", xyArr);
+  const cell = document.getElementsByClassName(xyString);
+  xyArr.push(cell);
+  return xyArr;
+}

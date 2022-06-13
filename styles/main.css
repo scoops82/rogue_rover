@@ -55,15 +55,38 @@ form {
   background-size: cover;
   display: grid;
   /* justify-items: center; */
-  grid-template-columns: repeat(25, 30px);
-  grid-template-rows: repeat(25, 30px);
+  grid-template-columns: repeat(25, 40px);
+  grid-template-rows: repeat(25, 40px);
   grid-gap: 0px;
 }
 
 .cell {
-  background-image: url("/assets/dust-storm.jpeg");
+  /* background-image: url("/assets/dust-storm.jpeg"); */
   justify-content: center;
   align-items: center;
   font-size: 3rem;
   border: 0.5px solid #53fb53b8;
+}
+
+#playerRover {
+  max-width: 35px;
+  transform: translate(0, -20px);
+}
+
+#rogueRover {
+  max-width: 35px;
+  transform: translate(0, -20px);
+}
+
+.cell.visible {
+  background-image: "none";
+}
+
+@keyframes move-north {
+  0% {
+    transform: translate(0, 20px);
+  }
+  100% {
+    transform: translate(0, -20px);
+  }
 }
