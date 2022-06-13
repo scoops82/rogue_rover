@@ -4,6 +4,7 @@ const instructionsArr = ["l", "r", "m"];
 const plateauGrid = document.querySelector(".plateau-grid");
 
 let playerRover;
+let rogueRover;
 
 function randomNumberGenerator(min, max) {
   // Generates a random integer between min and max inclusive
@@ -267,6 +268,7 @@ class Rover {
     console.log(
       `${this.name} new position: ${this.xPosition}, ${this.yPosition}, Heading: ${this.heading}`
     );
+    testForWin();
   }
 
   getCurrentCell() {
@@ -297,6 +299,7 @@ class Rover {
         );
     }
   }
+  randomMove() {}
 }
 
 // const plateau1 = new Plateau(9, 9);
@@ -387,13 +390,7 @@ gridGeneratorForm.addEventListener("submit", (e) => {
       startY = randomNumberGenerator(1, yMax);
     }
     const heading = headings[randomNumberGenerator(0, 3)];
-    const rogueRover = new Rover(
-      "rogueRover",
-      startX,
-      startY,
-      heading,
-      plateau
-    );
+    rogueRover = new Rover("rogueRover", startX, startY, heading, plateau);
     const startCellClass = `x${startX}-y${startY}`;
     const startingCell = document.getElementsByClassName(startCellClass);
     console.log(
@@ -430,4 +427,10 @@ function getStartingCell(clickEvent) {
   const cell = document.getElementsByClassName(xyString);
   xyArr.push(cell);
   return xyArr;
+}
+
+function testForWin() {
+  if (playerRover.getCurrentCell() == rogueRover.getCurrentCell()) {
+    console.log("Congratulations! You have docked with the Rogue Rover.");
+  }
 }
